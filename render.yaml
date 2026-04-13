@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: skaz-terem-bot
+    env: python
+    buildCommand: pip install -r bot/requirements.txt
+    startCommand: python bot/main.py
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.0
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: APP_URL
+        value: https://skaz-terem-booking.vercel.app

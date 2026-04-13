@@ -11,7 +11,9 @@ Telegram Bot для авторизации пользователей Сказо
 """
 
 import os
+import sys
 import logging
+import signal
 from datetime import datetime
 
 from aiogram import Bot, Dispatcher, types
@@ -20,6 +22,7 @@ from supabase import create_client, Client
 
 from dotenv import load_dotenv
 
+# Load .env if available (ignored in production like Render)
 load_dotenv()
 
 # === Конфигурация ===
@@ -30,15 +33,32 @@ CHANNEL_ID = "-1003507317011"
 APP_URL = os.getenv("APP_URL", "https://skaz-terem-booking.vercel.app")
 
 if not BOT_TOKEN:
-    raise ValueError("TELEGRAM_BOT_TOKEN not set in .env")
+    raise ValueError("TELEGRAM_BOT_TOKEN not set")
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+    stream=sys.stdout,
+)
 logger = logging.getLogger(__name__)
 
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+
+async def on_startup(dp: Dispatcher):
+    logger.info("Bot started successfully ✅")
+
+
+async def on_shutdown(dp: Dispatcher):
+    logger.info("Bot shutting down...")
+    await bot.session.close()
+
+
+dp.startup.register(on_startup)
+dp.shutdown.register(on_shutdown)
 
 
 async def is_subscribed(chat_id: int) -> bool:

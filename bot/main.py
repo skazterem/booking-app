@@ -48,11 +48,11 @@ dp = Dispatcher()
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 
-async def on_startup(dp: Dispatcher):
+async def on_startup():
     logger.info("Bot started successfully ✅")
 
 
-async def on_shutdown(dp: Dispatcher):
+async def on_shutdown():
     logger.info("Bot shutting down...")
     await bot.session.close()
 

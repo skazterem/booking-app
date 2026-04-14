@@ -145,6 +145,8 @@ async def echo_all(message: types.Message):
 
 
 async def main():
+    # Удалить webhook, если был установлен — используем polling
+    await bot.delete_webhook()
     logger.info("Starting bot...")
     await dp.start_polling(bot)
 
